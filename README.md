@@ -21,6 +21,12 @@ A 3D game written in Java using the JMonkeyEngine. Created for our final project
 ## How to Build
 (wip)
 
+## Attributions
+All third-party material used in the game are attributed in the game's Attributions menu, and also ATTRIBUTIONS.md in the Github Repository.
+
+## License
+This project is licensed under the permissive open-source MIT License, as indicated in LICENSE.
+
 ## FAQ
 ### Why JMonkeyEngine?
 Originally, the plan was to code the game using a custom-made engine using LWJGL 3 (Lightweight Java Game Library 3). Unfortunately due to time constraints, we were not able to do this.
