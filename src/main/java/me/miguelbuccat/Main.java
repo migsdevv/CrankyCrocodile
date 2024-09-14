@@ -1,13 +1,31 @@
 package me.miguelbuccat;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
-public class Main {
-    public static void main(String[] args) {
-        System.out.printf("Hello and welcome!");
+import com.jme3.app.SimpleApplication;
+import com.jme3.system.AppSettings;
+import com.simsilica.lemur.GuiGlobals;
+import me.miguelbuccat.state.MainMenuState;
 
-        for (int i = 1; i <= 5; i++) {
-            System.out.println("i = " + i);
-        }
+public class Main extends SimpleApplication {
+    public static void main(String[] args) {
+        Main app = new Main();
+
+        AppSettings settings = new AppSettings(true);
+        settings.setTitle("Cranky Crocodile");
+        
+        app.setSettings(settings);
+        
+        app.start();
+    }
+    
+    @Override
+    public void simpleInitApp() {
+        stateManager.attach(new MainMenuState(this));
+        
+        GuiGlobals.initialize(this);
+    }
+    
+    @Override
+    public void simpleUpdate(float tpf) {
+        
     }
 }
