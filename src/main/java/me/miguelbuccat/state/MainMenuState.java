@@ -3,6 +3,7 @@ package me.miguelbuccat.state;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
+import com.jme3.asset.AssetManager;
 import com.jme3.input.FlyByCamera;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
@@ -12,12 +13,17 @@ import com.jme3.renderer.Camera;
 import com.jme3.app.Application;
 
 import com.jme3.scene.control.CameraControl;
+import com.jme3.texture.Texture;
 import com.simsilica.lemur.*;
 import com.simsilica.lemur.component.QuadBackgroundComponent;
+
+import java.nio.file.Path;
 
 public class MainMenuState extends AbstractAppState {
     private final Node rootNode;
     private final Node guiNode;
+    
+    private final AssetManager assetManager;
 
     private final Node menuNode = new Node("Main Menu");
 
@@ -42,6 +48,8 @@ public class MainMenuState extends AbstractAppState {
     public MainMenuState(SimpleApplication app) {
         rootNode = app.getRootNode();
         guiNode = app.getGuiNode();
+        
+        assetManager = app.getAssetManager();
 
         flyByCamera = app.getFlyByCamera();
         
@@ -66,20 +74,23 @@ public class MainMenuState extends AbstractAppState {
         int screenHeight = app.getContext().getSettings().getHeight();
         backgroundContainer.setPreferredSize(new Vector3f(screenWidth, screenHeight, 0));
         backgroundContainer.setLocalTranslation(0, screenHeight, 0);
-        backgroundContainer.setBackground(new QuadBackgroundComponent(ColorRGBA.Blue));
+        backgroundContainer.setBackground(new QuadBackgroundComponent(new ColorRGBA(0.188f, 0.565f, 1.0f, 1.0f)));
         guiNode.attachChild(backgroundContainer);
         
         //Create the menu containers
-        mainMenu = new Container("menu-panel");
+        mainMenu = new Container();
         contributorsMenu = new Container();
         attributionsMenu = new Container();
+        createMainMenu(screenWidth, screenHeight);
+    }
+    
+    public void createMainMenu(float screenWidth, float screenHeight) {
 
         mainMenu.addChild(new Label("Hello, World."));
         Button clickMe = mainMenu.addChild(new Button("Click Me"));
         clickMe.addClickCommands(new Command<Button>() {
             @Override
             public void execute( Button source ) {
-                System.out.println("The world is yours.");
             }
         });
 
@@ -116,5 +127,20 @@ public class MainMenuState extends AbstractAppState {
         rootNode.detachChild(menuNode);
 
         super.cleanup();
+    }
+    
+    // helper function because im stupid
+    public Button createImageButton(String path, int w, int h, Command<Button> callback) {
+        Button imageButton = new Button("");
+        Texture texture = assetManager.loadTexture(path);
+
+        QuadBackgroundComponent imageBackground = new QuadBackgroundComponent(texture);
+        imageButton.setBackground(imageBackground);
+        
+        imageButton.setPreferredSize(new Vector3f(w, h, 0));
+
+        imageButton.addClickCommands(callback);
+        
+        return imageButton;
     }
 }
