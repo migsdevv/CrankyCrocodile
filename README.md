@@ -1,0 +1,28 @@
+# CrankyCrocodile
+A 3D game written in Java using the JMonkeyEngine. Created for our final project in my Programming 1 Class (taught by Sir. Jude Matthew Dominguiano) in DLSU-D SHS.
+
+## Contributors
+**Miguel Buccat**: Group Leader, Programmer, Tester & Debugger
+
+**Justin Chloe Alviar**: Assistant Group Leader, Debugger
+
+**Tom Maverick Carrasco**: Debugger, Tester, Documentation Specialist
+
+**Shyra Louie Bautista**: Graphic Designer & 3D Artist
+
+**John Ysmael Gabarda**: Visual Aid Editor & UI Designer
+
+## Screenshots
+(wip)
+
+## How to Install & Play
+(wip)
+
+## How to Build
+(wip)
+
+## FAQ
+### Why JMonkeyEngine?
+Originally, the plan was to code the game using a custom-made engine using LWJGL 3 (Lightweight Java Game Library 3). Unfortunately due to time constraints, we were not able to do this.
+
+Thus, the decision was made to just use JMonkeyEngine, one of the few well-developed 3D game engines for Java.
