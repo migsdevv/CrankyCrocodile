@@ -1,6 +1,9 @@
 # CrankyCrocodile
 A 3D game written in Java using the JMonkeyEngine. Created for our final project in my Programming 1 Class (taught by Sir. Jude Matthew Dominguiano) in DLSU-D SHS.
 
+## DISCLAIMER
+Please do not judge the code quality. This is my first time ever writing a game in Java, and all of this had to be completed in a span of a couple of days, so the code is bound to be terrible.
+
 ## Contributors
 **Miguel Buccat**: Group Leader, Programmer, Tester & Debugger
 
