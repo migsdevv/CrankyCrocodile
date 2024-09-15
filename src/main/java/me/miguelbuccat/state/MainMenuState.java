@@ -26,15 +26,20 @@ import com.simsilica.lemur.*;
 import me.miguelbuccat.util.GUIUtils;
 
 public class MainMenuState extends AbstractAppState {
+    private final SimpleApplication app;
+    
     private final Node rootNode;
     private final Node guiNode;
     
     private final AssetManager assetManager;
+    private final AppStateManager stateManager;
 
     private final Node menuNode = new Node("Main Menu");
 
     private final FlyByCamera flyByCamera;
     private final Camera camera;
+    
+    private AudioNode menuMusic;
     
     
     //Containers here
@@ -43,10 +48,13 @@ public class MainMenuState extends AbstractAppState {
     Container attributionsMenu;
 
     public MainMenuState(SimpleApplication app) {
+        this.app = app;
+        
         rootNode = app.getRootNode();
         guiNode = app.getGuiNode();
         
         assetManager = app.getAssetManager();
+        stateManager = app.getStateManager();
 
         flyByCamera = app.getFlyByCamera();
         
@@ -62,7 +70,7 @@ public class MainMenuState extends AbstractAppState {
         rootNode.attachChild(menuNode);
         
         //menu music
-        AudioNode menuMusic = new AudioNode(assetManager, "Sounds/menu.ogg", AudioData.DataType.Stream);
+        menuMusic = new AudioNode(assetManager, "Sounds/menu.ogg", AudioData.DataType.Stream);
         menuMusic.setLooping(true);
         menuMusic.setPositional(false);
         menuMusic.setVolume(3);
@@ -115,7 +123,7 @@ public class MainMenuState extends AbstractAppState {
         mainMenu.addChild(new GUIUtils(assetManager).createButton("Play", new Command<Button>() {
             @Override
             public void execute(Button button) {
-                
+                switchToGameState();
             }
         }));
         mainMenu.addChild(new GUIUtils(assetManager).createButton("Contributions", new Command<Button>() {
@@ -182,5 +190,16 @@ public class MainMenuState extends AbstractAppState {
         rootNode.detachChild(menuNode);
 
         super.cleanup();
+        mainMenu.removeFromParent();
+        contributorsMenu.removeFromParent();
+        attributionsMenu.removeFromParent();
+        
+        menuMusic.stop();
+    }
+    
+    public void switchToGameState() {
+        stateManager.detach(this);
+        
+        stateManager.attach(new GameState(app));
     }
 }
