@@ -10,54 +10,42 @@ import com.jme3.input.FlyByCamera;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Quaternion;
-import com.jme3.scene.CameraNode;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.renderer.Camera;
 import com.jme3.app.Application;
 import com.jme3.math.Vector3f;
 
-import com.jme3.scene.Spatial;
 import com.jme3.math.FastMath;
-import com.jme3.texture.Texture;
-import com.jme3.util.SkyFactory;
 import com.jme3.scene.shape.Box;
 import com.simsilica.lemur.*;
-import me.miguelbuccat.util.GUIUtils;
+import me.miguelbuccat.util.EnvironmentUtils;
+import me.miguelbuccat.util.GuiUtils;
 
 public class MainMenuState extends AbstractAppState {
     private final SimpleApplication app;
     
     private final Node rootNode;
     private final Node guiNode;
-    
+    private final Node menuNode = new Node("Main Menu");
     private final AssetManager assetManager;
     private final AppStateManager stateManager;
-
-    private final Node menuNode = new Node("Main Menu");
-
     private final FlyByCamera flyByCamera;
     private final Camera camera;
-    
     private AudioNode menuMusic;
-    
-    
+
     //Containers here
-    Container mainMenu;
-    Container contributorsMenu;
-    Container attributionsMenu;
+    private Container mainMenu;
+    private Container contributorsMenu;
+    private Container attributionsMenu;
 
     public MainMenuState(SimpleApplication app) {
         this.app = app;
-        
         rootNode = app.getRootNode();
         guiNode = app.getGuiNode();
-        
         assetManager = app.getAssetManager();
         stateManager = app.getStateManager();
-
         flyByCamera = app.getFlyByCamera();
-        
         camera = app.getCamera();
     }
     
@@ -65,11 +53,15 @@ public class MainMenuState extends AbstractAppState {
     public void initialize(AppStateManager stateManager, Application app) {
         super.initialize(stateManager, app);
         
+        // Disable flyby camera
         this.flyByCamera.setEnabled(false);
+
+        // Tilt camera by 15 degrees
+        camera.setRotation((new Quaternion()).fromAngleAxis(FastMath.DEG_TO_RAD * 15, Vector3f.UNIT_X));
 
         rootNode.attachChild(menuNode);
         
-        //menu music
+        // Handle menu music
         menuMusic = new AudioNode(assetManager, "Sounds/menu.ogg", AudioData.DataType.Stream);
         menuMusic.setLooping(true);
         menuMusic.setPositional(false);
@@ -84,80 +76,69 @@ public class MainMenuState extends AbstractAppState {
         water.setLocalTranslation(0, -20, 0);
         menuNode.attachChild(water);
 
-        Quaternion initialTilt = new Quaternion();
-        initialTilt.fromAngleAxis(FastMath.DEG_TO_RAD * 15, Vector3f.UNIT_X);
-
-        camera.setRotation(initialTilt);
-
-        //Create sky
-        createSky();
+        // Create sky
+        menuNode.attachChild(EnvironmentUtils.createSky(assetManager));
         
         int screenWidth = app.getContext().getSettings().getWidth();
         int screenHeight = app.getContext().getSettings().getHeight();
         
-        //Create the menu containers
+        // Create the menu containers
         mainMenu = new Container();
         contributorsMenu = new Container();
         attributionsMenu = new Container();
-        createMainMenu(screenWidth, screenHeight);
-        createContribsMenu(screenWidth, screenHeight);
         
+        // Populate menu containers
+        createMainMenu();
+        createContributionsMenu(screenWidth, screenHeight);
+        
+        // Initially attach the main menu container
         guiNode.attachChild(mainMenu);
     }
     
-    public void createSky() {
-        Texture west = assetManager.loadTexture("Textures/Sky/left.png");
-        Texture east = assetManager.loadTexture("Textures/Sky/right.png");
-        Texture north = assetManager.loadTexture("Textures/Sky/front.png");
-        Texture south = assetManager.loadTexture("Textures/Sky/back.png");
-        Texture up = assetManager.loadTexture("Textures/Sky/up.png");
-        Texture down = assetManager.loadTexture("Textures/Sky/down.png");
+    public void createMainMenu() {
+        // Import logo
+        mainMenu.addChild(GuiUtils.createImgLabel(assetManager, "Textures/logo.png", 364, 200));
         
-        Spatial sky = SkyFactory.createSky(assetManager, west, east, north, south, up, down);
-        
-        menuNode.attachChild(sky);
-    }
-    
-    public void createMainMenu(float screenWidth, float screenHeight) {
-        mainMenu.addChild(new GUIUtils(assetManager).createImgLabel("Textures/logo.png", 364, 200));
-        mainMenu.addChild(new GUIUtils(assetManager).createButton("Play", new Command<Button>() {
+        // Create buttons
+        mainMenu.addChild(GuiUtils.createButton("Play", new Command<Button>() {
             @Override
             public void execute(Button button) {
                 switchToGameState();
             }
         }));
-        mainMenu.addChild(new GUIUtils(assetManager).createButton("Contributions", new Command<Button>() {
+        
+        mainMenu.addChild(GuiUtils.createButton("Contributions", new Command<Button>() {
             @Override
             public void execute(Button button) {
                 guiNode.attachChild(contributorsMenu);
                 guiNode.detachChild(mainMenu);
             }
         }));
-        mainMenu.addChild(new GUIUtils(assetManager).createButton("Attributions", new Command<Button>() {
+        
+        mainMenu.addChild(GuiUtils.createButton("Attributions", new Command<Button>() {
             @Override
             public void execute(Button button) {
 
             }
         }));
-        mainMenu.addChild(new GUIUtils(assetManager).createButton("Exit", new Command<Button>() {
+        
+        mainMenu.addChild(GuiUtils.createButton("Exit", new Command<Button>() {
             @Override
             public void execute(Button button) {
                 System.exit(0);
             }
         }));
 
-        float windowWidth = mainMenu.getPreferredSize().x;
-        float windowHeight = mainMenu.getPreferredSize().y;
-
-        float xPos = (screenWidth - windowWidth) / 2;
-        float yPos = (screenHeight + windowHeight) / 2;
-
-        mainMenu.setLocalTranslation(xPos, yPos, 0);
+        // Center Main menu
+        GuiUtils.centerGUIContainer(app, mainMenu);
     }
 
-    public void createContribsMenu(float screenWidth, float screenHeight) {
-        contributorsMenu.addChild(new GUIUtils(assetManager).createImgLabel("Textures/Menu/contribs.png", 364, 382));
-        contributorsMenu.addChild(new GUIUtils(assetManager).createButton("Back", new Command<Button>() {
+    public void createContributionsMenu(float screenWidth, float screenHeight) {
+        // Import contributions
+        contributorsMenu.addChild(GuiUtils.createImgLabel(assetManager, "Textures/Menu/contribs.png", 364, 382));
+        
+        // Create back button
+        contributorsMenu.addChild(GuiUtils.createButton("Back", new Command<Button>() {
             @Override
             public void execute(Button button) {
                 guiNode.attachChild(mainMenu);
@@ -165,13 +146,8 @@ public class MainMenuState extends AbstractAppState {
             }
         }));
 
-        float windowWidth = contributorsMenu.getPreferredSize().x;
-        float windowHeight = contributorsMenu.getPreferredSize().y;
-
-        float xPos = (screenWidth - windowWidth) / 2;
-        float yPos = (screenHeight + windowHeight) / 2;
- 
-        contributorsMenu.setLocalTranslation(xPos, yPos, 0);
+        // Center Contributions menu
+        GuiUtils.centerGUIContainer(app, contributorsMenu);
     }
     
     @Override
