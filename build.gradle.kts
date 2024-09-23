@@ -18,6 +18,7 @@ dependencies {
     implementation("org.jmonkeyengine:jme3-lwjgl3:3.3.2-stable")
     implementation("org.jmonkeyengine:jme3-jogg:3.6.1-stable")
     implementation("org.jmonkeyengine:jme3-effects:3.6.1-stable")
+    implementation("org.jmonkeyengine:jme3-plugins:3.6.1-stable")
 
     implementation("com.simsilica:lemur:1.16.0")
     implementation("com.simsilica:lemur-proto:1.13.0")
