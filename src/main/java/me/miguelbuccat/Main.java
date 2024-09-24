@@ -1,6 +1,9 @@
 package me.miguelbuccat;
 
 import com.jme3.app.SimpleApplication;
+import com.jme3.light.DirectionalLight;
+import com.jme3.math.ColorRGBA;
+import com.jme3.math.Vector3f;
 import com.jme3.system.AppSettings;
 import com.simsilica.lemur.GuiGlobals;
 import me.miguelbuccat.state.MainMenuState;
@@ -43,6 +46,11 @@ public class Main extends SimpleApplication {
         stateManager.attach(new MainMenuState(this));
         
         GuiGlobals.initialize(this);
+
+        DirectionalLight sun = new DirectionalLight();
+        sun.setDirection(new Vector3f(-1, -1, -1).normalizeLocal());
+        sun.setColor(new ColorRGBA(1.0f, 1.0f, 1.0f, 1.0f));
+        rootNode.addLight(sun);
     }
     
     @Override

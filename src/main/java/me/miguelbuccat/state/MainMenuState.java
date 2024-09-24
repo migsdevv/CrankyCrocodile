@@ -17,6 +17,7 @@ import com.jme3.app.Application;
 import com.jme3.math.Vector3f;
 
 import com.jme3.math.FastMath;
+import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Box;
 import com.simsilica.lemur.*;
 import me.miguelbuccat.util.EnvironmentUtils;
@@ -69,12 +70,8 @@ public class MainMenuState extends AbstractAppState {
         menuNode.attachChild(menuMusic);
         menuMusic.play();
 
-        Geometry water = new Geometry("Water", new Box(200, 1, 200));
-        Material waterMat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md"); 
-        waterMat.setColor("Color", ColorRGBA.Blue);
-        water.setMaterial(waterMat);
-        water.setLocalTranslation(0, -20, 0);
-        menuNode.attachChild(water);
+        Spatial menuScene = assetManager.loadModel("3D/menu.glb");
+        menuNode.attachChild(menuScene);
 
         // Create sky
         menuNode.attachChild(EnvironmentUtils.createSky(assetManager));
@@ -90,6 +87,7 @@ public class MainMenuState extends AbstractAppState {
         // Populate menu containers
         createMainMenu();
         createContributionsMenu(screenWidth, screenHeight);
+        createAttribsMenu(screenWidth, screenHeight);
         
         // Initially attach the main menu container
         guiNode.attachChild(mainMenu);
@@ -118,7 +116,8 @@ public class MainMenuState extends AbstractAppState {
         mainMenu.addChild(GuiUtils.createButton("Attributions", new Command<Button>() {
             @Override
             public void execute(Button button) {
-
+                guiNode.attachChild(attributionsMenu);
+                guiNode.detachChild(mainMenu);
             }
         }));
         
@@ -148,6 +147,23 @@ public class MainMenuState extends AbstractAppState {
 
         // Center Contributions menu
         GuiUtils.centerGUIContainer(app, contributorsMenu);
+    }
+
+    public void createAttribsMenu(float screenWidth, float screenHeight) {
+        // Import contributions
+        attributionsMenu.addChild(GuiUtils.createImgLabel(assetManager, "Textures/Menu/attribs.png", 364, 382));
+
+        // Create back button
+        attributionsMenu.addChild(GuiUtils.createButton("Back", new Command<Button>() {
+            @Override
+            public void execute(Button button) {
+                guiNode.attachChild(mainMenu);
+                guiNode.detachChild(attributionsMenu);
+            }
+        }));
+
+        // Center Contributions menu
+        GuiUtils.centerGUIContainer(app, attributionsMenu);
     }
     
     @Override
