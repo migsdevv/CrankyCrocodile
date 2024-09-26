@@ -57,7 +57,8 @@ public class GameState extends AbstractAppState {
     private int health = 10;
     private Label healthLabel;
 
-    private Container gameOverPanel;
+    private boolean shouldContinue = true;
+    private Container gameOverPanel = new Container();
     
     public GameState(SimpleApplication app) {
         rootNode = app.getRootNode();
@@ -134,6 +135,7 @@ public class GameState extends AbstractAppState {
     private final AnalogListener moveListener = new AnalogListener() {
         @Override
         public void onAnalog(String name, float value, float tpf) {
+            if(!shouldContinue) return;
             if (crocodile != null) {
                 if (name.equals("MoveLeft")) {
                     // Move the spatial along +X when 'A' is pressed
@@ -204,9 +206,26 @@ public class GameState extends AbstractAppState {
         }
     }
 
+    public void gameOver() {
+        shouldContinue = false;
+
+        Label gameOverLabel = new Label("GAME OVER!");
+        gameOverLabel.setFontSize(48f);
+
+        Label scoreLabel = new Label("SCORE: " + score);
+        scoreLabel.setFontSize(24f);
+
+        gameOverPanel.addChild(gameOverLabel);
+        gameOverPanel.addChild(scoreLabel);
+        guiNode.attachChild(gameOverPanel);
+
+        GuiUtils.centerGUIContainer(app, gameOverPanel);
+    }
+
     @Override
     public void update(float tpf) {
         super.update(tpf);
+        if(!shouldContinue) return;
 
         timeSinceLastSpawn += tpf;
         
@@ -236,12 +255,13 @@ public class GameState extends AbstractAppState {
                     badFishNode.detachChild(fish);
                     health -= 1;
                     healthLabel.setText("HEALTH: " + health + "/10");
+                    if(health == 0) {
+                        if(!shouldContinue) return;
+                        shouldContinue = false;
+                        gameOver();
+                    }
                 }
             }
-        }
-        
-        if(health == 0) {
-            System.exit(0);
         }
 
         // Increase speed as time passes
